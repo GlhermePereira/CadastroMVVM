@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmvvm.databinding.ItemUserBinding
+import com.example.appmvvm.model.StatusUsuario
 import com.example.appmvvm.model.User
 
 class UserAdapter(private val users: List<User>) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
@@ -16,8 +17,11 @@ class UserAdapter(private val users: List<User>) : RecyclerView.Adapter<UserAdap
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = users[position]
         holder.binding.tvLogin.text = user.login
-        holder.binding.tvStatus.text = if (user.bloqueado) "Ativo" else "Inativo"
-    }
+        holder.binding.tvStatus.text = when (user.status) {
+            StatusUsuario.ATIVO -> "Ativo"
+            StatusUsuario.INATIVO -> "Inativo"
+            StatusUsuario.BLOQUEADO -> "Bloqueado"
+        }    }
 
     override fun getItemCount(): Int = users.size
 

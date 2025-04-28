@@ -25,21 +25,32 @@ class MainActivity : AppCompatActivity() {
         // Ação para o botão de login
         binding.btnLogin.setOnClickListener {
             val login = binding.edtLogin.text.toString()
-            val pass = binding.edtSenha.text.toString()
+            val senha = binding.edtSenha.text.toString()
 
-            // Verifica se o usuário pode logar
-            if (loginViewModel.login(login, pass)) {
-                val alertLogin = AlertDialog.Builder(this)
-                alertLogin.setTitle("Sistema X")
-                alertLogin.setMessage("Logado com sucesso")
-                alertLogin.show()
+            if (loginViewModel.isUsuarioBloqueado(login)) {
+                AlertDialog.Builder(this)
+                    .setTitle("Sistema X")
+                    .setMessage("Usuário bloqueado!")
+                    .show()
             } else {
-                val alertLogin = AlertDialog.Builder(this)
-                alertLogin.setTitle("Sistema X")
-                alertLogin.setMessage("Senha ou Login incorretos!")
-                alertLogin.show()
+                val sucesso = loginViewModel.login(login, senha)
+                if (sucesso) {
+                    AlertDialog.Builder(this)
+                        .setTitle("Sistema X")
+                        .setMessage("Logado com sucesso!")
+                        .show()
+                } else {
+                    val user = loginViewModel.getUsers().find { it.login == login }
+                    val tentativasRestantes = 3 - (user?.tentativasFalhas ?: 0)
+
+                    AlertDialog.Builder(this)
+                        .setTitle("Sistema X")
+                        .setMessage("Senha ou login incorretos! Tentativas restantes: $tentativasRestantes")
+                        .show()
+                }
             }
         }
+
 
         // Ação para o botão de cadastro
         binding.btnCadastrar.setOnClickListener {
